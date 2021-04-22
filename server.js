@@ -3,9 +3,11 @@ const app = express()
 const cors = require('cors')
 const path = require('path')
 
+
 const hamsters = require('./route/hamsters.js')
 
 const PORT = 1337
+const staticFolder = path.join(__dirname, 'static')
 
 //Middleware läggs alltid FÖRE endpoints
 // app.use(express.json())
@@ -16,8 +18,11 @@ app.use((req, res, next) =>{
     next()
 })
 
+//Startar upp routes
+app.use('/hamsters', hamsters)
 app.use(express.json())
 app.use(cors())
+app.use( express.static(staticFolder) )
 
 
 //Hämtar root filen(/) så att den kan visas i porten
@@ -28,14 +33,6 @@ app.get('/', (req, res) => {
  res.send('Yes i am  here')
 })
 
-// app.get('/hamsters', (req,res) => {
-// 	console.log('This is Hamsters');
-// 	// res.sendFile(__dirname + '/route/hamsters.js')
-// 	res.send(db)
-// })
-//__dirname är till för att veta var man befinner sig och då visar
-//variabeln var man befinner sig fram till
-
 
 
 //Startar upp servern
@@ -44,6 +41,6 @@ app.listen(PORT, () => {
 })
 
 
-//Startar upp routes
-app.use('/hamsters', hamsters)
+
+
  

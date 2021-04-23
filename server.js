@@ -7,7 +7,7 @@ const path = require('path')
 const hamsters = require('./route/hamsters.js')
 // const matches = require('./route/matches.js')
 
-const PORT = 1337
+const PORT = process.env.PORT || 1337
 const staticFolder = path.join(__dirname, 'static')
 
 //Middleware läggs alltid FÖRE endpoints

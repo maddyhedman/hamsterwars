@@ -5,25 +5,25 @@ const path = require('path')
 
 
 const hamsters = require('./route/hamsters.js')
+// const matches = require('./route/matches.js')
 
 const PORT = 1337
 const staticFolder = path.join(__dirname, 'static')
 
 //Middleware läggs alltid FÖRE endpoints
-// app.use(express.json())
-// app.use(express.urlencoded({ extended: true }))
-//Middleware
+
 app.use((req, res, next) =>{
     console.log(`${req.method} ${req.url}`, req.params);
     next()
 })
 
-//Startar upp routes
-app.use('/hamsters', hamsters)
 app.use(express.json())
 app.use(cors())
 app.use( express.static(staticFolder) )
 
+//Startar upp routes
+app.use('/hamsters', hamsters)
+// app.use('/matches', matches)
 
 //Hämtar root filen(/) så att den kan visas i porten
 //GET registrerar en Route

@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     const snapshot = await hamstrarRef.get();
 
     if (snapshot.empty) {
-        res.send([])
+        res.status(404).send('Hamsters does not exist')
         return
     }
     items = []
@@ -33,39 +33,70 @@ router.get('/', async (req, res) => {
 
 //POST
 router.post('/', async (req, res) => {
-	const object = req.body
+	
+	const object = req.body //Enligt consolen så returneras object tomt
+
 	console.log('console', object)
-	if(!object){
-		res.status(400).send('Object is not defined')
-		return
-	}
+
+	if (!isHamsterObject(object)) {
+        res.status(400).send("Object is not defined")
+        return
+    }
+
 	const docRef = await db.collection('Hamsterwar').add(object)
+    console.log('The document id is: ' + docRef.id)
+
+
+    console.log("console log 2")
+    res.status(200).send({id:docRef.id})
+
+	
 	console.log('Hej')
 	
-	if(!docRef.exists) {
-		res.status(400).send('Bad request')
-		return
-	}
-    console.log('The document id is: ' + docRef.id)
-	res.status(200).send(docRef.id)
 })
+
+// Funktionen kollar om hamster är ett objekt
+function isHamsterObject(maybeObject) {
+
+	if (!maybeObject)
+		return false
+	else if (!maybeObject.name || !maybeObject.age)
+		return false
+
+	return true
+};
 
 
 //PUT
-router.put('/:id', async (req, res) => {
+ router.put('/:id', async (req, res) => {
+	
+
+
 	const object = req.body
-	const id = req.params.id
+     const id = req.params.id
+     const docRef = db.collection('Hamsterwar').doc(id)
+     const doc = await docRef.get();
+    
+    console.log('console log 1', object);
+    console.log('console log 1.2', id);
+
+    if (!id) {
+		res.status(404).send("ID does not exist")
+		   return
+	   } 
+	if (!doc.exists) {
+          res.status(400).send("Hamsters does not exist")
+          return
+     }
+      
+
+      await docRef.set(object, {merge: true})
+     res.sendStatus(200)
+
 	
 	
-	if(!object || !id) {
-		res.status(404).send('Hamster not found')
-		return
-	}
-
-	const docRef = db.collection('Hamsterwar').doc(id)
-	await docRef.set(object, { merge: true })
-
-})
+		
+ })
 
 //RANDOM
 router.get('/random', async (req, res) => {
@@ -107,19 +138,25 @@ router.get('/:id', async (req, res) => {
 
 //DELETE
 router.delete('/:id', async (req,res) => {
+	  // Du behöver ID
+	  const id = req.params.id
+	  const docRef = db.collection('Hamsterwar').doc(id)
+  
+	  const doc = await docRef.get();
+  
+	  if (!doc.exists) {
+		  res.status(404).send("Database does not exist")
+		  return
+	  }
+  
+	  if (!id) {
+		res.status(400).send('ID not found')
+		  return
+	  }
+	  
+	  await docRef.delete()    
+	  res.sendStatus(200)
 
-	const id = req.params.id
-
-	if(!id) {
-		// res.sendStatus(400)
-	
-		res.status(404).send('ID not found')
-		return
-	}
-
-	await db.collection('Hamsterwar').doc(id).delete
-	// const result =  docRef.delete()
-	res.status(200).send('It worked')
 })
 
 

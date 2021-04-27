@@ -2,10 +2,8 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const path = require('path')
-
-
 const hamsters = require('./route/hamsters.js')
-// const matches = require('./route/matches.js')
+const matches = require('./route/matches.js')
 
 const PORT = process.env.PORT || 1337
 const staticFolder = path.join(__dirname, 'static')
@@ -23,7 +21,7 @@ app.use( express.static(staticFolder) )
 
 //Startar upp routes
 app.use('/hamsters', hamsters)
-// app.use('/matches', matches)
+app.use('/matches', matches)
 
 //Hämtar root filen(/) så att den kan visas i porten
 //GET registrerar en Route

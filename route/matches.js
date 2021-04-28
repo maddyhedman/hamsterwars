@@ -46,24 +46,7 @@ const router = express.Router()
 
  })
 
- router.get('/matchWinners/:id', async (req, res) => {
-	 const id = req.params.id
-	 const docRef = await db.collection('matches').doc(id)
-	 const snapshot = await docRef.get();
-
-	 if (snapshot.empty) {
-		res.sendStatus(404)
-		return
-	}
-
-	snapshot.forEach(doc => {
-		const data = doc.data()
-	   data.id = doc.id //ID behövs för POST, PUT, DELETE
-		items.push(data)
-	})
-	res.status(200).send(items)	
-
- })
+ 
 
  //POST
 // router.post('/', async (req, res) => {

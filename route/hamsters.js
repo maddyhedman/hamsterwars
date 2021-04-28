@@ -71,7 +71,6 @@ function isHamsterObject(maybeObject) {
  router.put('/:id', async (req, res) => {
 	
 
-
 	const object = req.body
      const id = req.params.id
      const docRef = await db.collection('Hamsterwar').doc(id).get()
@@ -91,9 +90,7 @@ function isHamsterObject(maybeObject) {
       await db.collection('Hamsterwar').doc(id).set(object, {merge: true})
      res.sendStatus(200)
 
-	
-	
-		
+			
  })
 
 //RANDOM

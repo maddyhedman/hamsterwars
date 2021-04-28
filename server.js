@@ -6,7 +6,7 @@ const hamsters = require('./route/hamsters.js')
 const matches = require('./route/matches.js')
 const winners = require('./route/winners.js')
 const losers = require('./route/losers.js')
-const matchWinner = require('.route/matchWinner.js')
+const matchWinners = require('.route/matchWinners.js')
 
 const PORT = process.env.PORT || 1337
 const staticFolder = path.join(__dirname, 'static')
@@ -27,7 +27,7 @@ app.use('/hamsters', hamsters)
 app.use('/matches', matches)
 app.use('/winners', winners)
 app.use('/losers', losers)
-app.use('matchWinner', matchWinner)
+app.use('/matchWinners', matchWinners)
 
 //Hämtar root filen(/) så att den kan visas i porten
 //GET registrerar en Route
@@ -36,7 +36,6 @@ app.get('/', (req, res) => {
 	console.log('GET /');
  res.send('Yes i am  here')
 })
-
 
 
 //Startar upp servern

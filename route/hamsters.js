@@ -74,23 +74,21 @@ function isHamsterObject(maybeObject) {
 
 	const object = req.body
      const id = req.params.id
-     const docRef = db.collection('Hamsterwar').doc(id)
-     const doc = await docRef.get();
+     const docRef = await db.collection('Hamsterwar').doc(id).get()
     
-    console.log('console log 1', object);
-    console.log('console log 1.2', id);
+	 if (!id || !docRef.exists) {
+        res.status(404).send("ID not found")
+        return
 
-    if (!id) {
-		res.status(404).send("ID does not exist")
-		   return
-	   } 
-	if (!doc.exists) {
-          res.status(400).send("Hamsters does not exist")
-          return
-     }
-      
+    } 
+	else if (Object.keys(object).length === 0) {
+        console.log('console log 1')
+        res.status(400).send("Bad request. Cannot send empty body")
+        return
+    //kolla om ID finns i databasen
+    } 
 
-      await docRef.set(object, {merge: true})
+      await db.collection('Hamsterwar').doc(id).set(object, {merge: true})
      res.sendStatus(200)
 
 	

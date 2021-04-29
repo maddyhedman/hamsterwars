@@ -6,7 +6,7 @@ const hamsters = require('./route/hamsters.js')
 const matches = require('./route/matches.js')
 const winners = require('./route/winners.js')
 const losers = require('./route/losers.js')
-const matchWinners = require('.route/matchWinners.js')
+const matchWinners = require('./route/matchWinners.js')
 
 const PORT = process.env.PORT || 1337
 const staticFolder = path.join(__dirname, 'static')
@@ -29,7 +29,7 @@ app.use('/winners', winners)
 app.use('/losers', losers)
 app.use('/matchWinners', matchWinners)
 
-//Hämtar root filen(/) så att den kan visas i porten
+
 //GET registrerar en Route
 //GET måste alltid ha en send annars kommer det bli en timeout
 app.get('/', (req, res) => {

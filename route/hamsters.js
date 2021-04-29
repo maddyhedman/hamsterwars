@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
         res.status(404).send('Hamsters does not exist')
         return
     }
-    items = []
+    let items = []
 
     snapshot.forEach(doc => {
         const data = doc.data()
@@ -34,9 +34,8 @@ router.get('/', async (req, res) => {
 //POST
 router.post('/', async (req, res) => {
 	
-	const object = req.body //Enligt consolen så returneras object tomt
+	const object = req.body 
 
-	console.log('console', object)
 
 	if (!isHamsterObject(object)) {
         res.status(400).send("Object is not defined")
@@ -44,14 +43,8 @@ router.post('/', async (req, res) => {
     }
 
 	const docRef = await db.collection('Hamsterwar').add(object)
-    console.log('The document id is: ' + docRef.id)
-
-
-    console.log("console log 2")
+ 
     res.status(200).send({id:docRef.id})
-
-	
-	console.log('Hej')
 	
 })
 
@@ -81,10 +74,8 @@ function isHamsterObject(maybeObject) {
 
     } 
 	else if (Object.keys(object).length === 0) {
-        console.log('console log 1')
         res.status(400).send("Bad request. Cannot send empty body")
         return
-    //kolla om ID finns i databasen
     } 
 
       await db.collection('Hamsterwar').doc(id).set(object, {merge: true})
@@ -107,7 +98,7 @@ router.get('/random', async (req, res) => {
 
     snapshot.forEach(doc => {
         const data = doc.data()
-        data.id = doc.id //ID behövs för POST, PUT, DELETE
+        data.id = doc.id 
         items.push(data)
     })
 
@@ -127,13 +118,14 @@ router.get('/:id', async (req, res) => {
 	 }
 
 	 const data = docRef.data()
+	
 	 res.send(data)
 })
 
 
 //DELETE
 router.delete('/:id', async (req,res) => {
-	  // Du behöver ID
+	
 	  const id = req.params.id
 	  const docRef = db.collection('Hamsterwar').doc(id)
   

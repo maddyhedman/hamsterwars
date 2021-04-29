@@ -7,26 +7,33 @@ const getDatabase = require('../database.js')
 const db = getDatabase();
 
 
+
 router.get('/:id', async (req, res) => {
-
 	const id = req.params.id
-	const docRef = await db.collection('matches').doc(id)
-	const snapshot = await docRef.get();
+    const docRef = db.collection('matches')
+	const snapshot = await docRef.where('winnerId', '==', `${id}`).get()
+	
+	try {
+	   if (snapshot.empty) {
+        console.log('test')
+		res.status(404).send('Hamsters does not exist')
+        return
+       }
 
-	if (snapshot.empty) {
-	   res.sendStatus(404)
-	   return
-   }
-
-   const winner = []
-
-   snapshot.forEach(doc => {
-	   const data = doc.data()
-	  data.id = doc.id //ID behövs för POST, PUT, DELETE
-	   items.push(data)
-   })
-   res.status(200).send(winner)	
+	let items = []
+	snapshot.forEach(doc => {
+		const data = doc.data()
+		items.push(data)  
+	})
+	res.status(200).send(items)	
+    } catch (err) {
+	 
+		res.sendStatus(500).send(err.message)
+		
+}
 
 })
+
+
 
 module.exports = router

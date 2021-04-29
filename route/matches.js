@@ -23,7 +23,7 @@ const router = express.Router()
 	
  		snapshot.forEach(doc => {
  			const data = doc.data()
-			data.id = doc.id //ID behövs för POST, PUT, DELETE
+			data.id = doc.id 
  			items.push(data)
  		})
  		res.status(200).send(items)	
@@ -31,75 +31,35 @@ const router = express.Router()
  })
 
  router.get('/:id', async (req, res) => {
-      const id = req.params.id
+     const id = req.params.id
  	 const docRef =  await db.collection('matches').doc(id).get()
      
- 	 //felmeddelande
+
 	 if(!docRef.exists) {
-		 res.status(404).send('Match not found')
+		 res.status(404).send('Database not found')
 		 return
 	 }
 
 	 const data = docRef.data()
-	 res.send(data)
+	 res.status(200).send(data)
 	
-
  })
 
- 
-
- //POST
-// router.post('/', async (req, res) => {
-	
-	// const match = req.body
-	// const docRef = await db.collection('matches').add(match)
-
- 	// if(!docRef.exists) {
- 	// 	res.status(404).send('Oops')
- 	// 	return
- 	// }
-    //  console.log('The document id is: ' + docRef.id)
- 	// res.send(docRef.id)
-
- //POST /matches
-//  router.post('/', async (req, res) => {
-//     const match = req.body
-
-//      // utan att ange id
-//     const docRef = await db.collection('Matches').add(match)
-//     console.log('The document id is: ' + docRef.id)
-
-//     if (!docRef.exists) {
-//         res.status(400).send("Ooops. Something went wrong")
-//         return
-//      }
-//      res.status(200).send(docRef.id)
 
 
-//      //TODO - KOLLA ATT DET ÄR ETT KORREKT MATCHOBJEKT
- 
-//  })
  //POST
 router.post('/', async (req, res) => {
 	
 	const object = req.body 
-
-	console.log('console', object)
 
 	if (!isMatchesObject(object)) {
         res.status(400).send("Object is not defined")
         return
     }
 
-	const docRef = await db.collection('Matches').add(object)
-    console.log('The document id is: ' + docRef.id)
+	const docRef = await db.collection('matches').add(object)
 
-
-    console.log("console log 2")
     res.status(200).send({id:docRef.id})
-
-	
-	console.log('Hej')
 	
 })
 
@@ -107,34 +67,35 @@ function isMatchesObject(maybeObject) {
 
 	if (!maybeObject)
 		return false
-	else if (!maybeObject.name || !maybeObject.age)
+	else if (!maybeObject.winnerId ||!maybeObject.loserId)
 		return false
 
 	return true
 }
 
  //DELETE
-
- router.delete('/:id', async (req,res) => {
-	// Du behöver ID
-	const id = req.params.id
-	const docRef = db.collection('Matches').doc(id)
-
-	const doc = await docRef.get();
-
-	if (!doc.exists) {
-		res.status(404).send("Database does not exist")
-		return
+ 
+router.delete('/:id', async (req, res) => {
+	const id = req.params.id;
+	const docRef = db.collection('matches').doc(id)
+    const doc = await docRef.get();
+  
+	try{
+	  	  if (!doc.exists) {
+		  res.status(404).send("Database does not exist")
+		  return
+	  }
+  
+	  if (!id) {
+		res.status(400).send('ID not found')
+		  return
+	  }
+	  
+	  await docRef.delete()    
+	  res.sendStatus(200)
+	} 
+	catch (err) {
+		res.sendStatus(500).send(err.message)
 	}
-
-	if (!id) {
-	  res.status(400).send('ID not found')
-		return
-	}
-	
-	await docRef.delete()    
-	res.sendStatus(200)
-
 })
-
  module.exports = router
